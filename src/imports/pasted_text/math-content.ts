@@ -669,9 +669,9 @@ export default function App() {
                 <div className="flex gap-8 items-center">
                     <div className="flex items-center gap-2">
                         <Search size={14} className="opacity-40" />
-                        <span>BNCC 8º ANO</span>
+                        <span>8º ANO</span>
                     </div>
-                    <span className="text-slate-700 font-mono tracking-tighter">made with love by Mom for Eric</span>
+                    <span className="text-slate-700 font-mono tracking-tighter">Made with love by Mom for Eric</span>
                 </div>
             </footer>
             
