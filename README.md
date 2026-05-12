@@ -10,6 +10,12 @@ npm install
 npm run dev
 ```
 
+If you want to mirror CI more closely, you can use:
+
+```bash
+npm ci
+```
+
 ## Production build check
 
 ```bash
@@ -28,5 +34,6 @@ The project includes `.github/workflows/deploy-pages.yml`, which deploys on ever
 
 Notes:
 - Vite is configured with a production relative base (`./`) in `vite.config.ts`, so assets load correctly on GitHub Pages project URLs.
+- The workflow builds the site with Node.js 24 and deploys the generated `dist/` folder through GitHub Actions.
 - The site will be published at `https://<your-user>.github.io/<your-repo>/` unless you use a custom domain.
   
