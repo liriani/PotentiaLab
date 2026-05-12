@@ -710,7 +710,7 @@ export default function App() {
                         <span>BNCC 8º ANO</span>
                     </div>
                     <span className="opacity-20 text-white font-thin">|</span>
-                    <span className="text-slate-500 font-mono tracking-tighter">POTENTIA_LAB_v2.0</span>
+                    <span className="text-slate-500 font-mono tracking-tighter">Made with love by Mom for Eric</span>
                 </div>
             </footer>
             
