@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GripHorizontal } from 'lucide-react';
 
 interface DragDropExerciseProps {
+  lang?: 'pt' | 'en' | 'es';
   data: {
     wordBank: string[];
     sentence: (string | { answer: string })[];
@@ -9,7 +10,14 @@ interface DragDropExerciseProps {
   onComplete: () => void;
 }
 
-export function DragDropExercise({ data, onComplete }: DragDropExerciseProps) {
+const LABELS = {
+  pt: { wordBank: 'ARRASTE AS PALAVRAS' },
+  en: { wordBank: 'DRAG THE WORDS' },
+  es: { wordBank: 'ARRASTRA LAS PALABRAS' }
+};
+
+export function DragDropExercise({ lang = 'pt', data, onComplete }: DragDropExerciseProps) {
+  const L = LABELS[lang];
   const [drops, setDrops] = useState<Record<number, string>>({});
   const [errorKey, setErrorKey] = useState<number | null>(null);
 
@@ -44,7 +52,7 @@ export function DragDropExercise({ data, onComplete }: DragDropExerciseProps) {
       <div className="border border-dashed border-emerald-500/30 rounded-xl p-4 bg-emerald-900/10 text-center">
         <p className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase mb-3 flex justify-center gap-2 items-center">
           <GripHorizontal size={14} />
-          ARRASTE AS PALAVRAS
+          {L.wordBank}
         </p>
         <div className="flex justify-center gap-3 flex-wrap">
           {data.wordBank.map((word) => (

@@ -3,12 +3,18 @@ import { Play, RotateCcw, MonitorPlay } from 'lucide-react';
 
 interface VisualBoardProps {
   type: string;
-  lang: string;
-  t: any;
+  lang?: string;
+  t?: any;
 }
 
-export function VisualBoard({ type, lang, t }: VisualBoardProps) {
+export function VisualBoard({ type, lang = 'pt', t }: VisualBoardProps) {
   const [step, setStep] = useState(0);
+  const MAGIC_HINT = {
+    pt: 'Divida por 10 a cada passo',
+    en: 'Divide by 10 at each step',
+    es: 'Divide por 10 en cada paso'
+  } as const;
+  const labels = t ?? { visualBoard: 'Interactive Board', nextStep: 'Next Step', reset: 'Restart' };
 
   useEffect(() => {
     setStep(0);
@@ -176,7 +182,7 @@ export function VisualBoard({ type, lang, t }: VisualBoardProps) {
             </div>
             {step > 0 && (
               <div className="mt-8 text-[10px] text-slate-500 font-black uppercase tracking-[0.4em]">
-                Divida por 10 a cada passo
+                {MAGIC_HINT[lang as 'pt' | 'en' | 'es'] ?? MAGIC_HINT.pt}
               </div>
             )}
           </div>
@@ -222,7 +228,7 @@ export function VisualBoard({ type, lang, t }: VisualBoardProps) {
 
       <div className="p-4 sm:p-5 sm:px-8 border-b border-slate-800/50 flex justify-between items-center bg-slate-900/40 gap-3">
         <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-3">
-          <MonitorPlay size={16} className="text-purple-500" /> {t.visualBoard}
+          <MonitorPlay size={16} className="text-purple-500" /> {labels.visualBoard}
         </h4>
         <div className="flex gap-1.5">
           {Array.from({ length: currentMaxSteps + 1 }).map((_, i) => (
@@ -247,11 +253,11 @@ export function VisualBoard({ type, lang, t }: VisualBoardProps) {
         >
           {step < currentMaxSteps ? (
             <>
-              <Play size={16} fill="currentColor" /> {t.nextStep}
+              <Play size={16} fill="currentColor" /> {labels.nextStep}
             </>
           ) : (
             <>
-              <RotateCcw size={16} /> {t.reset}
+              <RotateCcw size={16} /> {labels.reset}
             </>
           )}
         </button>

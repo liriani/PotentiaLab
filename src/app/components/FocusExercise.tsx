@@ -3,18 +3,38 @@ import { MousePointerClick } from 'lucide-react';
 
 interface FocusExerciseProps {
   target: string;
+  lang?: 'pt' | 'en' | 'es';
   onComplete: () => void;
 }
 
-export function FocusExercise({ target, onComplete }: FocusExerciseProps) {
+const LABELS = {
+  pt: {
+    instruction: 'Clique EXATAMENTE no Expoente da expressão abaixo.',
+    correct: 'Perfeito! Você acertou.',
+    incorrect: 'Ops, não é bem aí. Tente novamente.'
+  },
+  en: {
+    instruction: 'Click EXACTLY on the exponent in the expression below.',
+    correct: 'Perfect! You got it right.',
+    incorrect: 'Oops, not quite there. Try again.'
+  },
+  es: {
+    instruction: 'Haz clic EXACTAMENTE en el exponente de la expresión abajo.',
+    correct: '¡Perfecto! Acertaste.',
+    incorrect: 'Ups, no es ahí. Inténtalo otra vez.'
+  }
+};
+
+export function FocusExercise({ target, lang = 'pt', onComplete }: FocusExerciseProps) {
   const [feedback, setFeedback] = useState<{ success: boolean; msg: string } | null>(null);
+  const L = LABELS[lang];
 
   const handleClick = (area: string) => {
     if (area === target) {
-      setFeedback({ success: true, msg: 'Perfeito! Você acertou.' });
+      setFeedback({ success: true, msg: L.correct });
       setTimeout(() => onComplete(), 1000);
     } else {
-      setFeedback({ success: false, msg: 'Ops, não é bem aí. Tente novamente.' });
+      setFeedback({ success: false, msg: L.incorrect });
       setTimeout(() => setFeedback(null), 2000);
     }
   };
@@ -23,7 +43,7 @@ export function FocusExercise({ target, onComplete }: FocusExerciseProps) {
     <div className="space-y-4">
       <p className="text-sm text-slate-300 bg-blue-900/20 p-4 rounded-xl border border-blue-900/30 flex gap-2 items-center">
         <MousePointerClick size={16} className="text-blue-400" />
-        Clique EXATAMENTE no Expoente da expressão abaixo.
+        {L.instruction}
       </p>
 
       <div className="relative w-full h-40 sm:h-48 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden">
