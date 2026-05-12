@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Layers, CheckCircle2, Check, Zap, Target, Search, History, ChevronRight, Menu, X
+  Layers, CheckCircle2, Check, Zap, Target, Search, History, Menu, X
 } from 'lucide-react';
 import { VisualBoard } from './components/VisualBoard';
 import { DragDropExercise } from './components/DragDropExercise';
@@ -25,6 +25,8 @@ const TRANSLATIONS = {
     addBtn: "Concluir Módulo",
     statusReady: "TODOS OS MÓDULOS COMPLETOS",
     statusDev: "EM ANDAMENTO",
+    moduleLabel: "Módulo",
+    practiceSetTitle: "10 Exercícios de Prática",
     ui: {
       challenges: "HORA DA PRÁTICA",
       wordBank: "ARRASTE AS PALAVRAS",
@@ -48,6 +50,8 @@ const TRANSLATIONS = {
     addBtn: "Complete Module",
     statusReady: "ALL MODULES COMPLETE",
     statusDev: "IN PROGRESS",
+    moduleLabel: "Module",
+    practiceSetTitle: "10 Practice Exercises",
     ui: {
       challenges: "PRACTICE TIME",
       wordBank: "DRAG THE WORDS",
@@ -71,6 +75,8 @@ const TRANSLATIONS = {
     addBtn: "Completar Módulo",
     statusReady: "TODOS LOS MÓDULOS COMPLETOS",
     statusDev: "EN PROGRESO",
+    moduleLabel: "Módulo",
+    practiceSetTitle: "10 Ejercicios de Práctica",
     ui: {
       challenges: "HORA DE PRACTICAR",
       wordBank: "ARRASTRA LAS PALABRAS",
@@ -440,7 +446,7 @@ const HistoryInsight = ({ text, lang, t }: any) => {
 };
 
 export default function App() {
-  const [lang, setLang] = useState('pt');
+  const [lang, setLang] = useState<'pt' | 'en' | 'es'>('en');
   const [integrated, setIntegrated] = useState(new Set<number>());
   const [selection, setSelection] = useState(MATH_DATA[0]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -490,7 +496,7 @@ export default function App() {
 
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-10 shrink-0">
           <div className="flex bg-slate-900 p-1 sm:p-1.5 rounded-xl border border-white/5 shadow-inner">
-            {['pt', 'en', 'es'].map(l => (
+            {['en', 'pt', 'es'].map(l => (
               <button
                 key={l}
                 onClick={() => setLang(l as 'pt' | 'en' | 'es')}
@@ -582,7 +588,7 @@ export default function App() {
                 <header className="space-y-4 sm:space-y-6 border-b border-white/10 pb-6 sm:pb-10">
                   <div className="flex items-center gap-4">
                     <span className="bg-blue-600/10 text-blue-500 text-[10px] font-black px-3 sm:px-4 py-1.5 rounded-full uppercase tracking-widest border border-blue-600/20">
-                      Módulo {selection.id}
+                      {t.moduleLabel} {selection.id}
                     </span>
                   </div>
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl break-words">
@@ -643,10 +649,11 @@ export default function App() {
                       <CheckCircle2 size={20} /> {t.ui.challenges}
                     </h3>
                     {selection.exercises.focus && (
-                      <FocusExercise target={selection.exercises.focusTarget} onComplete={() => { }} />
+                      <FocusExercise target={selection.exercises.focusTarget} lang={lang as 'pt' | 'en' | 'es'} onComplete={() => { }} />
                     )}
                     {selection.exercises.dragDrop && (
                       <DragDropExercise
+                        lang={lang as 'pt' | 'en' | 'es'}
                         data={{
                           wordBank: selection.exercises.dragDrop.wordBank[lang],
                           sentence: selection.exercises.dragDrop.sentence[lang]
@@ -681,10 +688,11 @@ export default function App() {
                     {selection.exercises.exerciseSet && (
                       <div className="mt-8">
                         <h4 className="text-xs font-black text-purple-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                          <CheckCircle2 size={16} /> 10 Exercícios de Prática
+                          <CheckCircle2 size={16} /> {t.practiceSetTitle}
                         </h4>
                         <ExerciseSet
                           exercises={selection.exercises.exerciseSet}
+                          lang={lang as 'pt' | 'en' | 'es'}
                           onComplete={() => { }}
                         />
                       </div>
