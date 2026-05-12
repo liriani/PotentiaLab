@@ -726,9 +726,9 @@ export default function App() {
         <div className="flex gap-4 sm:gap-8 items-center shrink-0">
           <div className="hidden sm:flex items-center gap-2">
             <Search size={14} className="opacity-40" />
-            <span>BNCC 8º ANO</span>
+            <span>8º ANO</span>
           </div>
-          <span className="text-slate-700 font-mono tracking-tighter">POTENTIA_LAB<span className="hidden sm:inline">_v2.5_PRO</span></span>
+          <span className="text-slate-700 font-mono tracking-tighter">Made with love by Mom for Eric</span>
         </div>
       </footer>
 
