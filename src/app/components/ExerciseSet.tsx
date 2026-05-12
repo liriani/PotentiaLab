@@ -4,10 +4,10 @@ import { Check, X, ChevronRight, Trophy } from 'lucide-react';
 interface Exercise {
   id: number;
   type: string;
-  question: string;
-  options?: string[];
+  question: { pt: string; en: string; es: string } | string;
+  options?: { pt: string[]; en: string[]; es: string[] } | string[];
   correctAnswer: string | number;
-  explanation: string;
+  explanation: { pt: string; en: string; es: string } | string;
 }
 
 interface ExerciseSetProps {
@@ -43,6 +43,15 @@ const LABELS = {
   }
 };
 
+// Helper function to normalize true/false values across languages
+const toBoolToken = (val: string | number | undefined): string => {
+  if (!val) return '';
+  const str = String(val).toLowerCase().trim();
+  if (['verdadeiro', 'true', 'verdadero', '1'].includes(str)) return 'true';
+  if (['falso', 'false', '0'].includes(str)) return 'false';
+  return str;
+};
+
 export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetProps) {
   const L = LABELS[lang];
   const [currentExercise, setCurrentExercise] = useState(0);
@@ -52,7 +61,27 @@ export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetP
 
   const exercise = exercises[currentExercise];
   const userAnswer = answers[currentExercise];
-  const isCorrect = userAnswer?.toString() === exercise.correctAnswer?.toString();
+
+  // Helper to get language-specific content from exercise fields
+  const getContent = (field: any): string => {
+    if (typeof field === 'string') return field;
+    if (field && typeof field === 'object' && lang in field) return field[lang];
+    return '';
+  };
+
+  const getOptions = (field: any): string[] => {
+    if (Array.isArray(field) && typeof field[0] === 'string') return field;
+    if (field && typeof field === 'object' && lang in field) return field[lang] || [];
+    return [];
+  };
+
+  const exerciseQuestion = getContent(exercise.question);
+  const exerciseOptions = getOptions(exercise.options);
+  const exerciseExplanation = getContent(exercise.explanation);
+
+  const isCorrect = exercise.type === 'true-false'
+    ? toBoolToken(userAnswer) === toBoolToken(exercise.correctAnswer)
+    : userAnswer?.toString() === exercise.correctAnswer?.toString();
 
   const handleAnswer = (answer: string | number) => {
     if (showResult) return;
@@ -78,16 +107,22 @@ export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetP
 
   const progress = ((currentExercise + 1) / exercises.length) * 100;
 
+  // Language-specific labels
+  const questions = { pt: 'Questão', en: 'Question', es: 'Pregunta' };
+  const of = { pt: 'de', en: 'of', es: 'de' };
+  const correct = { pt: 'acertos', en: 'correct', es: 'correctas' };
+  const trueFalseLabels = { pt: ['Verdadeiro', 'Falso'], en: ['True', 'False'], es: ['Verdadero', 'Falso'] };
+
   return (
     <div className="space-y-6">
       {/* Progress Bar */}
       <div className="bg-slate-900/30 p-4 rounded-xl border border-white/5">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-bold text-slate-400">
-            Questão {currentExercise + 1} de {exercises.length}
+            {questions[lang]} {currentExercise + 1} {of[lang]} {exercises.length}
           </span>
           <span className="text-xs font-bold text-emerald-400">
-            {score} acertos
+            {score} {correct[lang]}
           </span>
         </div>
         <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
@@ -100,12 +135,12 @@ export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetP
 
       {/* Exercise Card */}
       <div className="bg-slate-900/20 p-5 sm:p-8 rounded-2xl sm:rounded-[2rem] border border-white/5">
-        <h3 className="text-base sm:text-lg text-slate-100 font-bold mb-5 sm:mb-6 break-words">{exercise.question}</h3>
+        <h3 className="text-base sm:text-lg text-slate-100 font-bold mb-5 sm:mb-6 break-words">{exerciseQuestion}</h3>
 
         {/* Multiple Choice */}
-        {exercise.type === 'multiple-choice' && exercise.options && (
+        {exercise.type === 'multiple-choice' && exerciseOptions.length > 0 && (
           <div className="space-y-3">
-            {exercise.options.map((option, idx) => {
+            {exerciseOptions.map((option, idx) => {
               const isSelected = userAnswer === option;
               const isCorrectOption = option === exercise.correctAnswer;
 
@@ -143,7 +178,7 @@ export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetP
         {/* True/False */}
         {exercise.type === 'true-false' && (
           <div className="flex gap-3 sm:gap-4">
-            {['Verdadeiro', 'Falso'].map((option) => {
+            {trueFalseLabels[lang].map((option) => {
               const isSelected = userAnswer === option;
               const isCorrectOption = option === exercise.correctAnswer;
 
@@ -182,12 +217,14 @@ export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetP
               value={userAnswer || ''}
               onChange={(e) => handleAnswer(e.target.value)}
               disabled={showResult}
-              placeholder="Digite sua resposta..."
+              placeholder={lang === 'pt' ? 'Digite sua resposta...' : lang === 'en' ? 'Type your answer...' : 'Escribe tu respuesta...'}
               className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-xl bg-slate-950 border-2 border-slate-700 text-white font-mono text-base sm:text-lg focus:border-purple-500 focus:outline-none disabled:opacity-50"
             />
             {showResult && (
               <div className="flex items-center gap-2">
-                <span className="text-slate-400">Resposta correta:</span>
+                <span className="text-slate-400">
+                  {lang === 'pt' ? 'Resposta correta:' : lang === 'en' ? 'Correct answer:' : 'Respuesta correcta:'}
+                </span>
                 <span className="text-emerald-400 font-bold font-mono">{exercise.correctAnswer}</span>
               </div>
             )}
@@ -209,9 +246,12 @@ export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetP
               )}
               <div>
                 <p className={`font-bold mb-2 ${isCorrect ? 'text-emerald-400' : 'text-blue-400'}`}>
-                  {isCorrect ? 'Correto! 🎉' : 'Vamos aprender!'}
+                  {isCorrect
+                    ? (lang === 'pt' ? 'Correto! 🎉' : lang === 'en' ? 'Correct! 🎉' : '¡Correcto! 🎉')
+                    : (lang === 'pt' ? 'Vamos aprender!' : lang === 'en' ? 'Let\'s learn!' : '¡Vamos a aprender!')
+                  }
                 </p>
-                <p className="text-slate-300 text-sm leading-relaxed">{exercise.explanation}</p>
+                <p className="text-slate-300 text-sm leading-relaxed">{exerciseExplanation}</p>
               </div>
             </div>
           </div>
@@ -230,7 +270,7 @@ export function ExerciseSet({ exercises, lang = 'pt', onComplete }: ExerciseSetP
                 : 'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:shadow-lg hover:scale-105'
             }`}
           >
-            Verificar Resposta
+            {lang === 'pt' ? 'Verificar Resposta' : lang === 'en' ? 'Check Answer' : 'Verificar Respuesta'}
           </button>
         ) : (
           <button
