@@ -8,7 +8,7 @@ import {
 const TRANSLATIONS = {
     pt: {
         title: "Potentia Lab",
-        subtitle: "Matemática 8º Ano - BNCC",
+        subtitle: "Matemática 8º Ano",
         structureTitle: "Trilha de Aprendizagem",
         modules: "Progresso",
         guideTitle: "Sua Jornada",

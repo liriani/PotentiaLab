@@ -8,7 +8,7 @@ import {
 const TRANSLATIONS = {
     pt: {
         title: "Potentia Lab",
-        subtitle: "Matemática 8º Ano - BNCC",
+        subtitle: "Matemática 8º Ano",
         structureTitle: "Trilha de Aprendizagem",
         modules: "Progresso",
         guideTitle: "Sua Jornada",
@@ -671,7 +671,7 @@ export default function App() {
                         <Search size={14} className="opacity-40" />
                         <span>BNCC 8º ANO</span>
                     </div>
-                    <span className="text-slate-700 font-mono tracking-tighter">POTENTIA_LAB_v2.5_PRO</span>
+                    <span className="text-slate-700 font-mono tracking-tighter">made with love by Mom for Eric</span>
                 </div>
             </footer>
             
